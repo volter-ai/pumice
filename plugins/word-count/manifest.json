@@ -1,0 +1,9 @@
+{
+  "id": "word-count",
+  "name": "Vault Word Count",
+  "version": "1.0.0",
+  "minAppVersion": "1.0.0",
+  "description": "Counts words across the whole vault. Demonstrates Plugin, commands, ribbon, Notice, and vault access through the shim.",
+  "author": "uicommons",
+  "isDesktopOnly": false
+}

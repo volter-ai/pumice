@@ -1,0 +1,204 @@
+[
+  {
+    "id": "admonition",
+    "tier": "T1",
+    "onload": false,
+    "firstFailure": "this.plugin.app.customCss.getSnippetPath is not a function",
+    "externals": []
+  },
+  {
+    "id": "advanced-tables",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "@codemirror/state",
+      "@codemirror/view"
+    ]
+  },
+  {
+    "id": "buttons",
+    "tier": "T0-fail",
+    "onload": false,
+    "firstFailure": "Class extends value undefined is not a constructor or null",
+    "externals": [
+      "@codemirror/view",
+      "@codemirror/language"
+    ]
+  },
+  {
+    "id": "calendar",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "commander",
+    "tier": "T1",
+    "onload": false,
+    "firstFailure": "Cannot read properties of undefined (reading 'containerEl')",
+    "externals": []
+  },
+  {
+    "id": "dataview",
+    "tier": "T1",
+    "onload": false,
+    "firstFailure": "Cannot read properties of undefined (reading 'defineMode')",
+    "externals": [
+      "@codemirror/state",
+      "@codemirror/view",
+      "@codemirror/language"
+    ]
+  },
+  {
+    "id": "emoji-shortcodes",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "homepage",
+    "tier": "T1",
+    "onload": false,
+    "firstFailure": "(0 , qe.getLanguage) is not a function",
+    "externals": []
+  },
+  {
+    "id": "iconize",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "@codemirror/view",
+      "@codemirror/state",
+      "@codemirror/language"
+    ]
+  },
+  {
+    "id": "kanban",
+    "tier": "T1",
+    "onload": false,
+    "firstFailure": "t.load is not a function",
+    "externals": [
+      "@codemirror/commands",
+      "@codemirror/state",
+      "@codemirror/view"
+    ]
+  },
+  {
+    "id": "linter",
+    "tier": "T1",
+    "onload": false,
+    "firstFailure": "(0 , Z.getLanguage) is not a function",
+    "externals": []
+  },
+  {
+    "id": "mind-map",
+    "tier": "T0",
+    "onload": false,
+    "firstFailure": "Class constructor Plugin cannot be invoked without 'new'",
+    "externals": []
+  },
+  {
+    "id": "natural-dates",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "omnisearch",
+    "tier": "T1",
+    "onload": false,
+    "firstFailure": "Cannot set properties of undefined (setting 'api')",
+    "externals": [
+      "http",
+      "url"
+    ]
+  },
+  {
+    "id": "outliner",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "@codemirror/view",
+      "@codemirror/language",
+      "@codemirror/state"
+    ]
+  },
+  {
+    "id": "paste-image-rename",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "periodic-notes",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "quickadd",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "recent-files",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "sliding-panes",
+    "tier": "T0",
+    "onload": false,
+    "firstFailure": "Class constructor Plugin cannot be invoked without 'new'",
+    "externals": []
+  },
+  {
+    "id": "style-settings",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "tag-wrangler",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "tasks",
+    "tier": "T1",
+    "onload": false,
+    "firstFailure": "(0 , hT.getLanguage) is not a function",
+    "externals": [
+      "@codemirror/view"
+    ]
+  },
+  {
+    "id": "templater",
+    "tier": "T0-fail",
+    "onload": false,
+    "firstFailure": "Class extends value undefined is not a constructor or null",
+    "externals": []
+  },
+  {
+    "id": "various-complements",
+    "tier": "T1",
+    "onload": false,
+    "firstFailure": "Cannot set properties of undefined (setting 'func')",
+    "externals": []
+  }
+]

@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>uicommons — vault display layer</title>
+    <style>
+      :root { --bg:#16181d; --panel:#1d2026; --ink:#e6e6e6; --muted:#888; --accent:#7aa2f7; }
+      * { box-sizing: border-box; }
+      html, body { margin:0; height:100%; background:var(--bg); color:var(--ink);
+        font:14px/1.55 -apple-system, system-ui, sans-serif; }
+      #app { display:grid; grid-template-columns: 220px 1fr 1fr; height:100vh; }
+      .col { overflow:auto; padding:14px; border-right:1px solid #000; }
+      h2 { font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:0 0 8px; }
+      ul { list-style:none; margin:0 0 18px; padding:0; }
+      li { padding:4px 6px; border-radius:5px; cursor:pointer; }
+      li:hover { background:var(--panel); color:var(--accent); }
+      .muted { color:var(--muted); cursor:default; }
+      #note { max-width:680px; }
+      #note a.wikilink { color:var(--accent); text-decoration:none; border-bottom:1px dotted var(--accent); }
+      #note h1,#note h2,#note h3 { line-height:1.25; }
+      #note code { background:#000; padding:1px 5px; border-radius:4px; }
+      #note pre { background:#000; padding:12px; border-radius:8px; overflow:auto; }
+      #graphcol { padding:0; position:relative; }
+      #graph { position:absolute; inset:0; }
+      .bar { display:flex; gap:8px; align-items:center; padding:8px 14px;
+        border-bottom:1px solid #000; background:var(--panel); }
+      .bar button { background:#2a2f3a; color:var(--ink); border:1px solid #000;
+        padding:5px 10px; border-radius:6px; cursor:pointer; }
+      .bar button:hover { border-color:var(--accent); }
+      .bar .sp { flex:1; }
+      #mode { color:var(--muted); font-size:12px; }
+      .title { font-weight:600; margin:0 0 10px; font-size:18px; }
+    </style>
+  </head>
+  <body>
+    <div class="bar">
+      <strong>uicommons</strong>
+      <button id="pick">📁 Open folder (no server)</button>
+      <button id="serve">🔌 Use served vault (/api)</button>
+      <span class="sp"></span>
+      <span id="mode">mode: —</span>
+    </div>
+    <div id="app">
+      <div class="col"><h2>Notes</h2><ul id="list"></ul></div>
+      <div class="col">
+        <div class="title" id="title">—</div>
+        <article id="note"></article>
+        <h2 style="margin-top:24px">Backlinks</h2>
+        <ul id="backlinks"></ul>
+      </div>
+      <div class="col" id="graphcol"><div id="graph"></div></div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

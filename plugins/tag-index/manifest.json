@@ -1,0 +1,9 @@
+{
+  "id": "tag-index",
+  "name": "Tag Index",
+  "version": "1.0.0",
+  "minAppVersion": "1.0.0",
+  "description": "Builds an index of tags across the vault using metadataCache. Demonstrates metadataCache.getFileCache and writing a note back through the vault.",
+  "author": "uicommons",
+  "isDesktopOnly": false
+}
