@@ -25,3 +25,6 @@ src-tauri/target/
 test-results/
 playwright-report/
 vault/undefined/
+
+# Design iteration screenshots (working artifacts)
+design-shots/

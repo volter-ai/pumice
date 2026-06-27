@@ -5,55 +5,160 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Pumice — workbench</title>
   <link rel="manifest" href="./manifest.webmanifest" />
-  <meta name="theme-color" content="#cba6f7" />
+  <meta name="theme-color" content="#1e1e1e" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <meta name="apple-mobile-web-app-title" content="Pumice" />
   <link rel="apple-touch-icon" href="./icons/128x128@2x.png" />
   <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').then(r=>{window.__swReady=true}).catch(()=>{}));}</script>
   <style>
-    :root { --background-primary: #1e1e2e; --text-normal: #cdd6f4; --text-accent: #cba6f7; --interactive-accent: #cba6f7; --font-text-size: 16px; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700&display=swap');
+    :root {
+      /* Obsidian-default-dark palette (neutral grays, restrained accent) */
+      --background-primary: #1e1e1e;
+      --background-primary-alt: #1a1a1a;
+      --background-secondary: #181818;
+      --background-secondary-alt: #161616;
+      --background-modifier-border: #2a2a2a;
+      --background-modifier-hover: rgba(255,255,255,0.055);
+      --background-modifier-active: rgba(255,255,255,0.062);
+      --text-normal: #dcddde;
+      --text-muted: #9a9a9c;
+      --text-faint: #6a6a6c;
+      --text-accent: #a98fe6;
+      --text-accent-hover: #b9a3ee;
+      --interactive-accent: #7c63e4;
+      --tag-bg: rgba(124,99,228,0.13);
+      --font-text-size: 16px;
+      --ribbon-w: 44px; --sidebar-w: 248px; --tabheader-h: 38px; --status-h: 24px; --titlebar-h: 30px;
+      --radius: 6px;
+    }
     * { box-sizing: border-box; }
-    body { margin: 0; font-family: -apple-system, system-ui, sans-serif; background: var(--background-primary); color: var(--text-normal); font-size: var(--font-text-size); }
-    #app { display: grid; grid-template-columns: 200px 1fr; height: 100vh; }
-    #sidebar { background: #181825; border-right: 1px solid #313244; overflow-y: auto; }
-    #sidebar h1 { font-size: 14px; padding: 12px; margin: 0; color: var(--text-accent); }
-    .feature-tab { display: block; width: 100%; text-align: left; padding: 8px 12px; background: none; border: none; color: var(--text-normal); cursor: pointer; font-size: 13px; }
-    .feature-tab:hover, .feature-tab.active { background: #313244; }
-    #main { padding: 16px; overflow: auto; }
+    html, body { margin: 0; height: 100%; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+      background: var(--background-primary); color: var(--text-normal);
+      font-size: var(--font-text-size); -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+    }
+    /* ---- workspace shell: ribbon | sidebar | (tabheader / main) ; status bar across bottom ---- */
+    #app {
+      display: grid;
+      grid-template-columns: var(--ribbon-w) var(--sidebar-w) 1fr;
+      grid-template-rows: var(--titlebar-h) 1fr var(--status-h);
+      height: 100vh;
+    }
+    /* Window titlebar (Obsidian desktop) — traffic lights + centered vault·note title */
+    #titlebar { grid-column: 1 / 4; grid-row: 1; display: flex; align-items: center; padding: 0 12px; background: var(--background-secondary-alt); border-bottom: 1px solid var(--background-modifier-border); -webkit-user-select: none; user-select: none; }
+    #titlebar .lights { display: flex; gap: 8px; }
+    #titlebar .lights i { width: 12px; height: 12px; border-radius: 50%; display: block; }
+    #titlebar .lights .r { background: #ff5f57; } #titlebar .lights .y { background: #febc2e; } #titlebar .lights .g { background: #28c840; }
+    #titlebar .title { flex: 1; text-align: center; font-size: 12.5px; color: var(--text-muted); }
+    /* Left icon ribbon */
+    #ribbon {
+      grid-column: 1; grid-row: 2; background: var(--background-secondary-alt);
+      border-right: 1px solid var(--background-modifier-border);
+      display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 0;
+    }
+    #ribbon .rib { width: 32px; height: 32px; display: grid; place-items: center; border-radius: var(--radius); color: #8c8c8c; cursor: pointer; }
+    #ribbon .rib:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
+    #ribbon .rib svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+    #ribbon .spacer { flex: 1; }
+    /* Sidebar (file-explorer style) */
+    #sidebar { grid-column: 2; grid-row: 2; background: var(--background-secondary); border-right: 1px solid var(--background-modifier-border); overflow-y: auto; padding: 4px; }
+    #sidebar h1 { font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-faint); padding: 10px 10px 6px; margin: 0; }
+    .feature-tab {
+      display: block; width: auto; text-align: left; margin: 1px 6px; padding: 5px 10px;
+      background: none; border: none; color: var(--text-muted); cursor: pointer;
+      font-size: 13px; font-weight: 450; border-radius: 5px; line-height: 1.5;
+      font-family: inherit; transition: background .08s, color .08s;
+    }
+    .feature-tab:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
+    .feature-tab.active { background: var(--background-modifier-active); color: var(--text-normal); font-weight: 500; }
+    /* Workspace column = tab header + main */
+    #workspace { grid-column: 3; grid-row: 2; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
+    #tabheader { height: var(--tabheader-h); flex: 0 0 auto; display: flex; align-items: flex-end; padding: 0 8px; background: var(--background-primary-alt); border-bottom: 1px solid var(--background-modifier-border); }
+    #tabheader .tab { display: inline-flex; align-items: center; gap: 8px; height: calc(var(--tabheader-h) - 4px); margin-bottom: -1px; padding: 0 14px; font-size: 13px; color: var(--text-normal); background: var(--background-primary); border: none; border-radius: 8px 8px 0 0; }
+    #tabheader .tab .x { color: var(--text-faint); font-size: 15px; }
+    #main { flex: 1 1 auto; padding: 28px 34px 60px; overflow: auto; max-width: 100%; line-height: 1.6; }
+    /* Obsidian "readable line length": centered content column */
     .panel { display: none; }
-    .panel.active { display: block; }
-    .callout { border-left: 3px solid var(--interactive-accent); padding: 8px 12px; margin: 8px 0; background: #313244; border-radius: 4px; }
-    .callout-title-inner { font-weight: bold; }
-    a.internal-link, a.tag { color: var(--text-accent); cursor: pointer; }
-    mark { background: #f9e2af; color: #1e1e2e; }
-    .cm-editor { border: 1px solid #313244; min-height: 120px; }
-    table { border-collapse: collapse; } td, th { border: 1px solid #313244; padding: 4px 8px; }
-    .canvas-node { position: absolute; border: 1px solid var(--interactive-accent); padding: 6px; background: #313244; font-size: 12px; }
-    #canvas-host { position: relative; height: 320px; border: 1px solid #313244; }
-    .hover-popover { position: absolute; background: #181825; border: 1px solid var(--interactive-accent); padding: 8px; max-width: 300px; z-index: 10; }
-    .graph-2d circle { fill: var(--text-accent); } .graph-2d line { stroke: #585b70; }
-    input, button.action { background: #313244; color: var(--text-normal); border: 1px solid #45475a; padding: 4px 8px; border-radius: 4px; }
-    .result-item { padding: 4px; cursor: pointer; } .result-item:hover { background: #313244; }
-    .metadata-property { display: flex; gap: 8px; padding: 2px 0; } .metadata-property-key { color: var(--text-accent); min-width: 100px; }
+    .panel.active { display: block; max-width: 720px; margin: 0 auto; }
+    #main ul li::marker { color: var(--text-faint); }
+    /* Reading typography ~ Obsidian */
+    #main h1, #main h2, #main h3 { font-weight: 600; line-height: 1.3; color: var(--text-normal); }
+    #main h1 { font-size: 1.7em; font-weight: 650; margin: .4em 0 .5em; letter-spacing: -.01em; }
+    #main h2 { font-size: 1.38em; margin: 1.4em 0 .5em; }
+    #main h3 { font-size: 1.2em; margin: 1.2em 0 .4em; }
+    #main p { margin: .6em 0; }
+    #main ul, #main ol { padding-left: 1.5em; margin: .5em 0; }
+    #main li { margin: 0; }
+    a.internal-link, a.tag, #main a { color: var(--text-accent); text-decoration: none; cursor: pointer; }
+    a.internal-link:hover, #main a:hover { color: var(--text-accent-hover); text-decoration: underline; text-underline-offset: 2px; }
+    a.tag { background: rgba(255,255,255,.05); border-radius: 12px; padding: 2px 8px; font-size: .82em; font-weight: 500; color: var(--text-accent); vertical-align: baseline; }
+    a.tag:hover { text-decoration: none; background: var(--tag-bg); }
+    mark { background: rgba(255,208,0,.38); color: inherit; border-radius: 4px; padding: 1px 4px; }
+    /* Callouts (tinted to the border colour, with an icon) */
+    .callout { background: rgba(124,99,228,.066); border-left: 3px solid var(--interactive-accent); border-radius: 0 6px 6px 0; padding: 12px 16px 12px 14px; margin: 16px 0; }
+    .callout-title, .callout-title-inner { font-weight: 600; }
+    .callout-title { display: flex; align-items: center; gap: 8px; margin-bottom: 5px; color: var(--text-normal); }
+    .callout-title::before { content: ''; width: 17px; height: 17px; flex: 0 0 auto; background: var(--interactive-accent); -webkit-mask: var(--callout-ic) center/contain no-repeat; mask: var(--callout-ic) center/contain no-repeat; }
+    :root { --callout-ic: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 16v-4M12 8h.01'/%3E%3C/svg%3E"); }
+    /* Task lists */
+    #main ul:has(input[type=checkbox]) { list-style: none; padding-left: .2em; }
+    #main li:has(input[type=checkbox]) { display: flex; align-items: flex-start; gap: 9px; }
+    #main input[type=checkbox] { appearance: none; -webkit-appearance: none; width: 16px; height: 16px; margin-top: 4px; border-radius: 50%; border: 1px solid #5a5a5a; background: transparent; cursor: pointer; position: relative; flex: 0 0 auto; transition: background .1s, border-color .1s; }
+    #main input[type=checkbox]:hover { border-color: var(--interactive-accent); }
+    #main input[type=checkbox]:checked { background: var(--interactive-accent); border-color: var(--interactive-accent); }
+    #main input[type=checkbox]:checked::after { content: ''; position: absolute; left: 5px; top: 2px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+    /* Inputs / tables / misc */
+    .cm-editor { border: 1px solid var(--background-modifier-border); border-radius: 6px; min-height: 120px; }
+    table { border-collapse: collapse; } td, th { border: 1px solid var(--background-modifier-border); padding: 5px 10px; }
+    .canvas-node { position: absolute; border: 1px solid var(--interactive-accent); padding: 6px; background: #262626; font-size: 12px; border-radius: 6px; }
+    #canvas-host { position: relative; height: 320px; border: 1px solid var(--background-modifier-border); border-radius: 6px; }
+    .hover-popover { position: absolute; background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 8px; box-shadow: 0 8px 28px rgba(0,0,0,.45); padding: 12px 16px; max-width: 320px; z-index: 10; }
+    input, button.action { background: var(--background-primary); color: var(--text-normal); border: 1px solid var(--background-modifier-border); padding: 6px 10px; border-radius: 6px; font-family: inherit; font-size: 13px; }
+    input:focus { outline: none; border-color: var(--interactive-accent); }
+    .result-item { padding: 6px 8px; cursor: pointer; border-radius: 5px; } .result-item:hover { background: var(--background-modifier-hover); }
+    .metadata-property { display: flex; gap: 10px; padding: 3px 0; } .metadata-property-key { color: var(--text-muted); min-width: 110px; }
     #graph3d-host, #graph-host > svg, .graph-2d { max-width: 100%; }
     img, svg, table, pre { max-width: 100%; }
-    pre { overflow-x: auto; }
-    /* Mobile: collapse the fixed sidebar into a horizontal scrolling tab bar, single column. */
+    pre { background: var(--background-secondary); border: 1px solid var(--background-modifier-border); border-radius: 6px; padding: 10px 12px; overflow-x: auto; }
+    code { background: rgba(255,255,255,.06); border-radius: 4px; padding: 1px 5px; font-size: .9em; }
+    pre code { background: none; padding: 0; }
+    /* Status bar */
+    #statusbar { grid-column: 1 / 4; grid-row: 3; display: flex; align-items: center; justify-content: flex-end; gap: 16px; padding: 0 14px; background: var(--background-secondary-alt); border-top: 1px solid var(--background-modifier-border); color: var(--text-faint); font-size: 12px; }
+    /* Mobile */
     @media (max-width: 768px) {
-      #app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
-      #sidebar { border-right: none; border-bottom: 1px solid #313244; }
+      #app { grid-template-columns: 1fr; grid-template-rows: auto 1fr var(--status-h); }
+      #ribbon, #titlebar { display: none; }
+      #sidebar { grid-column: 1; grid-row: 1 / 2; border-right: none; border-bottom: 1px solid var(--background-modifier-border); }
       #sidebar h1 { display: inline-block; }
       #tabs { display: flex; overflow-x: auto; white-space: nowrap; }
       .feature-tab { display: inline-block; width: auto; }
-      #main { padding: 12px; }
+      #workspace { grid-column: 1; grid-row: 2 / 3; }
+      #tabheader { display: none; }
+      #main { padding: 14px 16px 30px; }
+      #statusbar { grid-column: 1; grid-row: 3 / 4; }
     }
-</style>
+  </style>
 </head>
 <body>
   <div id="app">
+    <header id="titlebar"><span class="lights"><i class="r"></i><i class="y"></i><i class="g"></i></span><span class="title">Pumice — Welcome</span></header>
+    <nav id="ribbon" aria-hidden="true">
+      <div class="rib" title="New note"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></div>
+      <div class="rib" title="Search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg></div>
+      <div class="rib" title="Graph"><svg viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="9" r="2.5"/><circle cx="9" cy="18" r="2.5"/><path d="M8 7l8 1M8 16l1-8"/></svg></div>
+      <div class="rib" title="Canvas"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="7" height="6" rx="1"/><rect x="14" y="9" width="7" height="6" rx="1"/></svg></div>
+      <div class="spacer"></div>
+      <div class="rib" title="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg></div>
+    </nav>
     <nav id="sidebar"><h1>Pumice</h1><div id="tabs"></div></nav>
-    <main id="main"></main>
+    <section id="workspace">
+      <div id="tabheader"><span class="tab"><span>Welcome</span><span class="x">×</span></span></div>
+      <main id="main"></main>
+    </section>
+    <footer id="statusbar"><span id="status-info">5 notes</span></footer>
   </div>
   <script type="module" src="/src/app/workbench.js"></script>
 </body>
