@@ -293,6 +293,64 @@ feature('graph3d', 'Graph (real 3D-graph plugin)', (root) => {
     .catch((e) => { status.textContent = 'ERROR: ' + (e && e.message); });
 });
 
+// Render a markdown code-block through a REAL plugin's registered processor.
+async function renderRealCodeblock(pluginId, lang, source, host) {
+  const inst = await ensureRealPlugin(pluginId);
+  app.metadataCache.trigger('resolved');
+  await new Promise((r) => setTimeout(r, 500)); // dataview/tasks index (worker) settle
+  const proc = app._codeblocks && app._codeblocks.get(lang);
+  if (!proc) throw new Error('no codeblock processor "' + lang + '" from ' + pluginId);
+  const ctx = { sourcePath: 'Welcome.md', frontmatter: null, addChild() {}, getSectionInfo() { return null }, docId: 'doc' };
+  await proc(source, host, ctx);
+  return inst;
+}
+
+feature('dataview', 'Dataview (real plugin)', (root) => {
+  root.append(el('h2', { textContent: 'Dataview — real plugin query (Web Worker index)' }));
+  const out = el('div'); out.setAttribute('data-testid', 'dataview-out'); root.append(out);
+  const status = el('div', { 'data-testid': 'dataview-status', textContent: 'loading real dataview…' }); root.append(status);
+  renderRealCodeblock('dataview', 'dataview', 'TABLE rating FROM "" SORT rating DESC', out)
+    .then(() => { const rows = out.querySelectorAll('table tr').length; status.textContent = 'real dataview rendered a table with ' + rows + ' rows'; })
+    .catch((e) => { status.textContent = 'ERROR: ' + e.message; });
+});
+
+feature('tasks', 'Tasks (real plugin)', (root) => {
+  root.append(el('h2', { textContent: 'Tasks — real plugin query over vault list items' }));
+  const out = el('div'); out.setAttribute('data-testid', 'tasks-out'); root.append(out);
+  const status = el('div', { 'data-testid': 'tasks-status', textContent: 'loading real tasks…' }); root.append(status);
+  renderRealCodeblock('tasks', 'tasks', 'not done', out)
+    .then(() => { const items = out.querySelectorAll('li, .task-list-item, .tasks-list-text').length; status.textContent = 'real tasks rendered ' + items + ' open task item(s)'; })
+    .catch((e) => { status.textContent = 'ERROR: ' + e.message; });
+});
+
+feature('templater', 'Templater (real plugin)', (root) => {
+  root.append(el('h2', { textContent: 'Templater — real plugin expands <% tp.* %>' }));
+  const before = el('pre', { 'data-testid': 'templater-before' });
+  const after = el('pre', { 'data-testid': 'templater-after' });
+  const status = el('div', { 'data-testid': 'templater-status', textContent: 'loading real templater…' });
+  root.append(el('div', { textContent: 'template:' }), before, el('div', { textContent: 'result:' }), after, status);
+  (async () => {
+    try {
+      const inst = await ensureRealPlugin('templater');
+      const tp = inst.templater;
+      const file = app.vault.getMarkdownFiles()[0];
+      app.workspace.setActiveFile(file);
+      const tpl = 'sum = <% 2 + 3 %> · upper = <% "ab".toUpperCase() %> · title = <% tp.file.title %>';
+      before.textContent = tpl;
+      // Drive the GENUINE templater engine (parse_template) — same path the plugin uses
+      // to render <% tp.* %> + arbitrary JS expressions.
+      const cfg = tp.create_running_config
+        ? tp.create_running_config(file, file, 0)
+        : { template_file: file, target_file: file, run_mode: 0, active_file: file };
+      const result = await tp.parse_template(cfg, tpl);
+      after.textContent = result;
+      const ok = typeof result === 'string' && !result.includes('<%') && /sum = 5/.test(result) && /upper = AB/.test(result);
+      window.__templater = { result };
+      status.textContent = ok ? 'real templater expanded the template ✓' : 'ran → ' + result;
+    } catch (e) { status.textContent = 'ERROR: ' + e.message; }
+  })();
+});
+
 feature('backlinks', 'Backlinks', (root) => {
   root.append(el('h2', { textContent: 'Backlinks to Welcome.md' }));
   const files = Object.fromEntries(app.vault.getMarkdownFiles().map((f) => [f.path, app.vault._cache.get(f.path)]));

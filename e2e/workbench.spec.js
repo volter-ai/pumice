@@ -164,6 +164,32 @@ test('search: REAL omnisearch plugin returns query-specific full-text results', 
   expect(hasDune).toBe(false); // "hobbit" must NOT return Dune → genuine filtering
 });
 
+test('dataview: REAL dataview plugin renders a query table (Web Worker index)', async ({ page }) => {
+  await page.getByTestId('tab-dataview').click();
+  await expect.poll(() => page.evaluate(() => !!(window.app && window.app.plugins.plugins['dataview'])), { timeout: 12000 }).toBe(true);
+  await expect(page.getByTestId('dataview-status')).toContainText('rendered a table', { timeout: 12000 });
+  // genuine query output: a real <table> with rows
+  await expect(page.getByTestId('dataview-out').locator('table')).toBeVisible({ timeout: 12000 });
+  expect(await page.getByTestId('dataview-out').locator('table tr').count()).toBeGreaterThan(1);
+});
+
+test('tasks: REAL tasks plugin renders open tasks from the vault', async ({ page }) => {
+  await page.getByTestId('tab-tasks').click();
+  await expect.poll(() => page.evaluate(() => !!(window.app && window.app.plugins.plugins['tasks'])), { timeout: 12000 }).toBe(true);
+  await expect(page.getByTestId('tasks-status')).toContainText(/rendered \d+ open task/, { timeout: 12000 });
+  expect(await page.getByTestId('tasks-out').locator('li').count()).toBeGreaterThan(0);
+});
+
+test('templater: REAL templater plugin expands <% tp.* %> in the active editor', async ({ page }) => {
+  await page.getByTestId('tab-templater').click();
+  await expect.poll(() => page.evaluate(() => !!(window.app && window.app.plugins.plugins['templater'])), { timeout: 12000 }).toBe(true);
+  await expect(page.getByTestId('templater-status')).toContainText('expanded the template', { timeout: 12000 });
+  // result computed the JS expressions and no template tokens remain
+  await expect(page.getByTestId('templater-after')).toContainText('sum = 5');
+  await expect(page.getByTestId('templater-after')).toContainText('upper = AB');
+  await expect(page.getByTestId('templater-after')).not.toContainText('<%');
+});
+
 test('backlinks: computed for Welcome.md', async ({ page }) => {
   await page.getByTestId('tab-backlinks').click();
   const items = page.getByTestId('backlinks-list').locator('li');
