@@ -64,6 +64,27 @@ EVENTS.forEach((e, i) => {
   add(e, `Historic event on ${L(planet)}.\n\nFactions: ${houses.map(L).join(', ')}.\nKey figures: ${chars.map(L).join(', ')}.`);
 });
 
+// ---- scale it up: operatives, sietches, battles — dense procedural cross-links ----
+const ROLES = ['Mentat', 'Swordmaster', 'Sayyadina', 'Fedaykin', 'Spy', 'Envoy', 'Naib', 'Suk Doctor', 'Warmaster', 'Archivist'];
+const operatives = [];
+HOUSES.forEach((h, hi) => {
+  for (let k = 0; k < 9; k++) {
+    const name = `${ROLES[k % ROLES.length]} ${h.split(' ').pop()}-${k + 1}`;
+    operatives.push([name, h, PLANETS[(hi + k) % PLANETS.length]]);
+  }
+});
+operatives.forEach(([name, house, planet], i) => {
+  const peers = [operatives[(i + 1) % operatives.length][0], operatives[(i + 7) % operatives.length][0]];
+  const tech = (HOUSE_TECH[house] || [])[i % 2] || TECH[i % TECH.length];
+  const ev = EVENTS[i % EVENTS.length];
+  add(name, `${ROLES[i % ROLES.length]} serving ${L(house)} on ${L(planet)}.\n\nWields ${L(tech)}. Fought at ${L(ev)}. Allies: ${peers.map(L).join(', ')}.`);
+});
+for (let s = 0; s < 14; s++) {
+  const planet = PLANETS[s % PLANETS.length];
+  const folk = [operatives[(s * 3) % operatives.length][0], operatives[(s * 5 + 1) % operatives.length][0], CHARS[(s * 2) % CHARS.length][0]];
+  add(`Sietch ${['Tabr', 'Jacurutu', 'Gara Kulon', 'Tuono', 'Haditha', 'Bena Geberit', 'Wormhaven'][s % 7]} ${s + 1}`, `Stronghold on ${L(planet)}. Sheltered ${folk.map(L).join(', ')} during ${L(EVENTS[s % EVENTS.length])}.`);
+}
+
 const nodeCount = Object.keys(vault).length;
 
 // ---- mount the REAL 3D-graph plugin ----
