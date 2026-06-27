@@ -92,11 +92,42 @@ async function ensureRealPlugin(id) {
 async function mountRealGraph(host) {
   await ensureRealPlugin('3d-graph');
   const leaf = app.workspace._makeLeaf();
+  leaf.containerEl.style.cssText = 'position:absolute;inset:0';
   host.appendChild(leaf.containerEl);
   app.workspace.activeLeaf = leaf; // so the plugin's getLeaf(false) targets this leaf
   const cmd = app.commands.findCommand('open-3d-graph-global') || app.commands.listCommands().find((c) => /3d.?graph/i.test(c.id));
   if (cmd) await app.commands.executeCommandById(cmd.id);
-  return leaf;
+  // The plugin sizes its 3d-force-graph to the window; reframe it to the host so the
+  // graph is centered+fit. There can be several ForceGraph instances (global/local/
+  // settings) — collect them all and pick the POPULATED one.
+  // The ForceGraph instance is a FUNCTION (3d-force-graph returns a fn with methods),
+  // held as a property of the view. Test function-valued props, but only recurse into
+  // plain objects (so we don't explode over function method-properties).
+  const collect = (root, depth, seen, out) => {
+    if (!root || depth > 6 || seen.has(root) || typeof root !== 'object') return;
+    seen.add(root);
+    for (const k of Object.keys(root)) {
+      let v; try { v = root[k]; } catch { continue; }
+      if (!v) continue;
+      const t = typeof v;
+      if ((t === 'object' || t === 'function')) {
+        try { if (typeof v.zoomToFit === 'function' && typeof v.graphData === 'function') out.push(v); } catch {}
+      }
+      if (t === 'object') collect(v, depth + 1, seen, out);
+    }
+  };
+  await new Promise((r) => setTimeout(r, 900));
+  const cands = [];
+  collect(leaf.view, 0, new Set(), cands);
+  const nodeCount = (g) => { try { return (g.graphData().nodes || []).length; } catch { return 0; } };
+  const fg = cands.sort((a, b) => nodeCount(b) - nodeCount(a))[0] || null;
+  if (fg) {
+    try { fg.width(host.clientWidth).height(host.clientHeight); } catch {}
+    try { fg.zoomToFit(700, 50); } catch {}
+    setTimeout(() => { try { fg.zoomToFit(700, 50); } catch {} }, 1200);
+    window.__fg = fg;
+  }
+  return { leaf, fg };
 }
 
 // Drive the REAL omnisearch plugin for a query (replaces the retired src/search engine).
@@ -247,12 +278,12 @@ feature('search', 'Search', (root) => {
 
 feature('graph3d', 'Graph (real 3D-graph plugin)', (root) => {
   root.append(el('h2', { textContent: 'Graph — real 3D-graph community plugin (WebGL)' }));
-  const host = el('div'); host.setAttribute('data-testid', 'graph3d-host'); host.style.width = '100%'; host.style.maxWidth = '600px'; host.style.height = '360px'; host.style.position = 'relative';
+  const host = el('div'); host.setAttribute('data-testid', 'graph3d-host'); host.style.width = '100%'; host.style.maxWidth = '900px'; host.style.height = '520px'; host.style.position = 'relative'; host.style.background = '#0b0e14'; host.style.borderRadius = '8px'; host.style.overflow = 'hidden';
   root.append(host);
   const status = el('div', { 'data-testid': 'graph3d-status', textContent: 'loading real plugin…' });
   root.append(status);
   mountRealGraph(host)
-    .then(() => { const c = host.querySelector('canvas'); window.__graph3d = c; status.textContent = c ? ('mounted: real 3d-graph plugin, canvas ' + c.width + 'x' + c.height) : 'plugin loaded (no canvas)'; })
+    .then(({ fg }) => { const c = host.querySelector('canvas'); window.__graph3d = c; const n = fg && fg.graphData ? (fg.graphData().nodes || []).length : 0; status.textContent = c ? ('mounted: real 3d-graph plugin · canvas ' + c.width + 'x' + c.height + ' · ' + n + ' nodes · framed') : 'plugin loaded (no canvas)'; })
     .catch((e) => { status.textContent = 'ERROR: ' + (e && e.message); });
 });
 
