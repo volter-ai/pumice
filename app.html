@@ -63,9 +63,22 @@
     #ribbon .rib:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
     #ribbon .rib svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     #ribbon .spacer { flex: 1; }
-    /* Sidebar (file-explorer style) */
-    #sidebar { grid-column: 2; grid-row: 2; background: var(--background-secondary); border-right: 1px solid var(--background-modifier-border); overflow-y: auto; padding: 4px; }
+    /* Sidebar (real Obsidian file explorer) */
+    #sidebar { grid-column: 2; grid-row: 2; background: var(--background-secondary); border-right: 1px solid var(--background-modifier-border); overflow-y: auto; padding: 0; display: flex; flex-direction: column; }
     #sidebar h1 { font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-faint); padding: 10px 10px 6px; margin: 0; }
+    .nav-header { display: flex; align-items: center; height: 36px; padding: 0 12px; font-size: 13px; font-weight: 600; color: var(--text-normal); }
+    #filetree { flex: 0 0 auto; padding: 2px 6px 8px; }
+    .nav-row { display: flex; align-items: center; gap: 5px; height: 25px; border-radius: 5px; color: var(--text-muted); cursor: pointer; font-size: 13px; white-space: nowrap; overflow: hidden; }
+    .nav-row:hover { background: var(--background-modifier-hover); color: var(--text-normal); }
+    .nav-row.is-active { background: var(--background-modifier-active); color: var(--text-normal); }
+    .nav-row svg { width: 15px; height: 15px; stroke: currentColor; fill: none; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: 0 0 auto; opacity: .8; }
+    .nav-row .chev { transition: transform .12s; }
+    .nav-folder.is-collapsed > .nav-row .chev { transform: rotate(-90deg); }
+    .nav-folder.is-collapsed > .nav-children { display: none; }
+    .nav-file .chev-spacer { width: 15px; flex: 0 0 auto; }
+    /* Workbench feature nav (secondary) */
+    .nav-sep { margin: 6px 12px 2px; font-size: 11px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--text-faint); }
+    #tabs { flex: 1 1 auto; padding-bottom: 8px; }
     .feature-tab {
       display: block; width: auto; text-align: left; margin: 1px 6px; padding: 5px 10px;
       background: none; border: none; color: var(--text-muted); cursor: pointer;
@@ -153,7 +166,12 @@
       <div class="spacer"></div>
       <div class="rib" title="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/></svg></div>
     </nav>
-    <nav id="sidebar"><h1>Pumice</h1><div id="tabs"></div></nav>
+    <nav id="sidebar">
+      <div class="nav-header">Pumice</div>
+      <div id="filetree"></div>
+      <div class="nav-sep">Workbench</div>
+      <div id="tabs"></div>
+    </nav>
     <section id="workspace">
       <div id="tabheader"><span class="tab"><span>Welcome</span><span class="x">×</span></span></div>
       <main id="main"></main>

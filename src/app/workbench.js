@@ -477,6 +477,54 @@ async function boot() {
     main.append(panel);
     [...tabs.children].forEach((b) => b.classList.toggle('active', b.dataset.feature === id));
   }
+  // --- real Obsidian-style file explorer (vault tree) ---
+  const svgEl = (s) => { const d = document.createElement('div'); d.innerHTML = s; return d.firstElementChild; };
+  const ICON = {
+    chev: '<svg class="chev" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>',
+    folder: '<svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',
+    file: '<svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',
+  };
+  function buildFileTree() {
+    const tree = document.getElementById('filetree'); if (!tree) return;
+    tree.replaceChildren();
+    const renderInto = (parentEl, folder, depth) => {
+      const kids = [...(folder.children || [])].sort((a, b) => { const af = a.children ? 0 : 1, bf = b.children ? 0 : 1; return af !== bf ? af - bf : (a.name || '').localeCompare(b.name || ''); });
+      for (const c of kids) {
+        if (c.children) {
+          const wrap = el('div', { className: 'nav-folder' });
+          const row = el('div', { className: 'nav-row' }); row.style.paddingLeft = (depth * 14 + 6) + 'px';
+          row.append(svgEl(ICON.chev), svgEl(ICON.folder), el('span', { textContent: c.name }));
+          const childrenEl = el('div', { className: 'nav-children' });
+          row.onclick = () => wrap.classList.toggle('is-collapsed');
+          wrap.append(row, childrenEl); parentEl.append(wrap);
+          renderInto(childrenEl, c, depth + 1);
+        } else if (/\.md$/i.test(c.path)) {
+          const row = el('div', { className: 'nav-row nav-file' }); row.style.paddingLeft = (depth * 14 + 6) + 'px';
+          row.dataset.path = c.path;
+          row.append(el('span', { className: 'chev-spacer' }), svgEl(ICON.file), el('span', { textContent: (c.basename || c.name).replace(/\.md$/i, '') }));
+          row.onclick = () => showNote(c.path);
+          parentEl.append(row);
+        }
+      }
+    };
+    renderInto(tree, app.vault.getRoot(), 0);
+  }
+  // Clean Obsidian reading view of a single note (the default workspace surface).
+  function showNote(path) {
+    main.replaceChildren();
+    const view = el('div', { className: 'panel active markdown-reading-view' });
+    view.setAttribute('data-panel', 'note'); view.setAttribute('data-testid', 'note-pane'); view.setAttribute('data-current', path);
+    renderMarkdown(app.vault._cache.get(path) || VAULT[path] || '', view, { resolve, postProcessors: app.postProcessors });
+    view.querySelectorAll('a.internal-link').forEach((a) => { a.onclick = (e) => { e.preventDefault(); const t = decodeURIComponent(a.dataset.target); const hit = app.vault.getMarkdownFiles().find((f) => f.path.replace(/\.md$/i, '').endsWith(t)); if (hit) showNote(hit.path); }; });
+    main.append(view);
+    document.querySelectorAll('#filetree .nav-row.is-active').forEach((r) => r.classList.remove('is-active'));
+    const active = [...document.querySelectorAll('#filetree .nav-file')].find((r) => r.dataset.path === path); if (active) active.classList.add('is-active');
+    document.querySelectorAll('#tabs .feature-tab.active').forEach((b) => b.classList.remove('active'));
+    const name = (path.split('/').pop() || path).replace(/\.md$/i, '');
+    const tab = document.querySelector('#tabheader .tab span:first-child'); if (tab) tab.textContent = name;
+    const title = document.querySelector('#titlebar .title'); if (title) title.textContent = 'Pumice — ' + name;
+  }
+  window.__showNote = showNote; window.__buildFileTree = buildFileTree;
   for (const f of FEATURES) { const b = el('button', { className: 'feature-tab', textContent: f.label }); b.dataset.feature = f.id; b.setAttribute('data-testid', 'tab-' + f.id); b.onclick = () => show(f.id); tabs.append(b); }
   // Drag-and-drop a vault folder/files anywhere to load it (Chromium folder drop via
   // webkitGetAsEntry; plain file drop elsewhere).
@@ -484,10 +532,11 @@ async function boot() {
   document.body.addEventListener('drop', async (e) => {
     e.preventDefault();
     const map = await readDataTransfer(e.dataTransfer);
-    if (Object.keys(map).length) { app = await createApp(memoryAdapter(map), async (md) => md); window.__app = app; window.__droppedCount = Object.keys(map).length; show('vault'); }
+    if (Object.keys(map).length) { app = await createApp(memoryAdapter(map), async (md) => md); window.__app = app; window.__droppedCount = Object.keys(map).length; buildFileTree(); showNote(app.vault.getMarkdownFiles()[0]?.path || 'Welcome.md'); }
   });
-  window.__loadDropped = async (fileLike) => { const map = await filesToVault(fileLike); app = await createApp(memoryAdapter(map), async (md) => md); window.__app = app; window.__droppedCount = Object.keys(map).length; show('vault'); return Object.keys(map).length; };
+  window.__loadDropped = async (fileLike) => { const map = await filesToVault(fileLike); app = await createApp(memoryAdapter(map), async (md) => md); window.__app = app; window.__droppedCount = Object.keys(map).length; buildFileTree(); showNote(app.vault.getMarkdownFiles()[0]?.path || 'Welcome.md'); return Object.keys(map).length; };
   window.__app = app; window.__ready = true;
-  show('vault');
+  buildFileTree();
+  showNote('Welcome.md');
 }
 boot().catch((e) => { const d = document.createElement('pre'); d.id = 'boot-error'; d.setAttribute('data-testid', 'boot-error'); d.textContent = String(e && e.stack || e); document.body.append(d); window.__bootError = String(e); });
