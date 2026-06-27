@@ -61,15 +61,20 @@ test('editor: real CodeMirror 6 renders, live-preview decorations, edit works', 
   expect(await page.evaluate(() => !!document.querySelector('.cm-header, .cm-strong, .cm-line'))).toBe(true);
 });
 
-test('3D graph: real Three.js/WebGL canvas mounts and renders', async ({ page }) => {
+test('graph: REAL 3D-graph community plugin renders a WebGL canvas from real vault links', async ({ page }) => {
   await page.getByTestId('tab-graph3d').click();
-  await page.waitForTimeout(1200);
-  await expect(page.getByTestId('graph3d-status')).toContainText('mounted: 5 nodes');
+  // the real published plugin loads + mounts (no pumice-built graph)
+  await expect(page.getByTestId('graph3d-status')).toContainText('real 3d-graph plugin', { timeout: 10000 });
   const canvas = page.getByTestId('graph3d-host').locator('canvas');
   await expect(canvas).toBeVisible();
   // a real WebGL context exists on the mounted canvas
   const glOk = await page.evaluate(() => { const c = document.querySelector('[data-testid=graph3d-host] canvas'); const gl = c && (c.getContext('webgl') || c.getContext('webgl2')); return !!gl; });
   expect(glOk).toBe(true);
+  // it is the GENUINE plugin: instance registered + its live ForceGraph holds real nodes
+  const loaded = await page.evaluate(() => !!(window.app && window.app.plugins && window.app.plugins.plugins['3d-graph']));
+  expect(loaded).toBe(true);
+  const nodes = await page.evaluate(() => { try { return (window.__fg.graphData().nodes || []).length; } catch { return 0; } });
+  expect(nodes).toBeGreaterThan(0);
 });
 
 test('markdown decorations: ALL features render in the browser', async ({ page }) => {
@@ -144,17 +149,19 @@ test('properties: typed widgets render + getData round-trip', async ({ page }) =
   await expect(page.getByTestId('properties-data')).toContainText('"published":true');
 });
 
-test('search: operator query returns results', async ({ page }) => {
+test('search: REAL omnisearch plugin returns query-specific full-text results', async ({ page }) => {
   await page.getByTestId('tab-search').click();
-  await expect(page.getByTestId('search-results').locator('li')).toHaveCount(1); // tag:home → Welcome
-  await page.getByTestId('search-input').fill('task-todo:');
-  await expect(page.getByTestId('search-results').locator('li')).toHaveCount(2); // Welcome + Tasks
-});
-
-test('graph: 2D nodes + links render as SVG', async ({ page }) => {
-  await page.getByTestId('tab-graph').click();
-  await expect(page.getByTestId('graph-host').locator('svg .graph-node')).toHaveCount(5);
-  expect(await page.getByTestId('graph-host').locator('svg .graph-link').count()).toBeGreaterThan(0);
+  // the genuine plugin loads (no pumice-built search engine)
+  await expect.poll(() => page.evaluate(() => !!(window.app && window.app.plugins && window.app.plugins.plugins['omnisearch'])), { timeout: 10000 }).toBe(true);
+  // a real query re-ranks/filters: "welcome" surfaces Welcome.md
+  await page.getByTestId('search-input').fill('welcome');
+  await expect(page.getByTestId('search-results')).toContainText('Welcome.md', { timeout: 8000 });
+  // a different query returns a DIFFERENT, specific result — proving real search, not a static list
+  await page.getByTestId('search-input').fill('hobbit');
+  await expect.poll(async () => (await page.getByTestId('search-results').locator('li').allTextContents()).join('|'), { timeout: 8000 })
+    .toMatch(/Hobbit/);
+  const hasDune = (await page.getByTestId('search-results').locator('li').allTextContents()).some((t) => /Dune/.test(t));
+  expect(hasDune).toBe(false); // "hobbit" must NOT return Dune → genuine filtering
 });
 
 test('backlinks: computed for Welcome.md', async ({ page }) => {
