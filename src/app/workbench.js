@@ -122,10 +122,16 @@ async function mountRealGraph(host) {
   const nodeCount = (g) => { try { return (g.graphData().nodes || []).length; } catch { return 0; } };
   const fg = cands.sort((a, b) => nodeCount(b) - nodeCount(a))[0] || null;
   if (fg) {
-    try { fg.width(host.clientWidth).height(host.clientHeight); } catch {}
-    try { fg.zoomToFit(700, 50); } catch {}
-    setTimeout(() => { try { fg.zoomToFit(700, 50); } catch {} }, 1200);
     window.__fg = fg;
+    // Resize the renderer to the host and zoom-to-fit; retry a few times so it sticks
+    // even if the plugin re-sizes to the window or the sim settles late.
+    const frame = () => {
+      try { fg.width(host.clientWidth).height(host.clientHeight); } catch {}
+      try { const cv = host.querySelector('canvas'); if (cv) { cv.style.width = '100%'; cv.style.height = '100%'; } } catch {}
+      try { fg.zoomToFit(400, 40); } catch {}
+    };
+    frame();
+    for (const d of [600, 1300, 2200]) setTimeout(frame, d);
   }
   return { leaf, fg };
 }
@@ -278,7 +284,7 @@ feature('search', 'Search', (root) => {
 
 feature('graph3d', 'Graph (real 3D-graph plugin)', (root) => {
   root.append(el('h2', { textContent: 'Graph — real 3D-graph community plugin (WebGL)' }));
-  const host = el('div'); host.setAttribute('data-testid', 'graph3d-host'); host.style.width = '100%'; host.style.maxWidth = '900px'; host.style.height = '520px'; host.style.position = 'relative'; host.style.background = '#0b0e14'; host.style.borderRadius = '8px'; host.style.overflow = 'hidden';
+  const host = el('div'); host.setAttribute('data-testid', 'graph3d-host'); host.style.width = '100%'; host.style.height = '620px'; host.style.position = 'relative'; host.style.background = '#0b0e14'; host.style.borderRadius = '8px'; host.style.overflow = 'hidden';
   root.append(host);
   const status = el('div', { 'data-testid': 'graph3d-status', textContent: 'loading real plugin…' });
   root.append(status);
