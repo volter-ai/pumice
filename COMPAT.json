@@ -1,9 +1,16 @@
 [
   {
+    "id": "3d-graph",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
     "id": "admonition",
-    "tier": "T1",
-    "onload": false,
-    "firstFailure": "this.plugin.app.customCss.getSnippetPath is not a function",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
     "externals": []
   },
   {
@@ -11,20 +18,14 @@
     "tier": "T2",
     "onload": true,
     "firstFailure": null,
-    "externals": [
-      "@codemirror/state",
-      "@codemirror/view"
-    ]
+    "externals": []
   },
   {
     "id": "buttons",
-    "tier": "T0-fail",
-    "onload": false,
-    "firstFailure": "Class extends value undefined is not a constructor or null",
-    "externals": [
-      "@codemirror/view",
-      "@codemirror/language"
-    ]
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
   },
   {
     "id": "calendar",
@@ -35,21 +36,17 @@
   },
   {
     "id": "commander",
-    "tier": "T1",
-    "onload": false,
-    "firstFailure": "Cannot read properties of undefined (reading 'containerEl')",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
     "externals": []
   },
   {
     "id": "dataview",
-    "tier": "T1",
-    "onload": false,
-    "firstFailure": "Cannot read properties of undefined (reading 'defineMode')",
-    "externals": [
-      "@codemirror/state",
-      "@codemirror/view",
-      "@codemirror/language"
-    ]
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
   },
   {
     "id": "emoji-shortcodes",
@@ -60,9 +57,9 @@
   },
   {
     "id": "homepage",
-    "tier": "T1",
-    "onload": false,
-    "firstFailure": "(0 , qe.getLanguage) is not a function",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
     "externals": []
   },
   {
@@ -70,35 +67,27 @@
     "tier": "T2",
     "onload": true,
     "firstFailure": null,
-    "externals": [
-      "@codemirror/view",
-      "@codemirror/state",
-      "@codemirror/language"
-    ]
+    "externals": []
   },
   {
     "id": "kanban",
-    "tier": "T1",
-    "onload": false,
-    "firstFailure": "t.load is not a function",
-    "externals": [
-      "@codemirror/commands",
-      "@codemirror/state",
-      "@codemirror/view"
-    ]
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
   },
   {
     "id": "linter",
-    "tier": "T1",
-    "onload": false,
-    "firstFailure": "(0 , Z.getLanguage) is not a function",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
     "externals": []
   },
   {
     "id": "mind-map",
-    "tier": "T0",
-    "onload": false,
-    "firstFailure": "Class constructor Plugin cannot be invoked without 'new'",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
     "externals": []
   },
   {
@@ -110,9 +99,9 @@
   },
   {
     "id": "omnisearch",
-    "tier": "T1",
-    "onload": false,
-    "firstFailure": "Cannot set properties of undefined (setting 'api')",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
     "externals": [
       "http",
       "url"
@@ -123,11 +112,7 @@
     "tier": "T2",
     "onload": true,
     "firstFailure": null,
-    "externals": [
-      "@codemirror/view",
-      "@codemirror/language",
-      "@codemirror/state"
-    ]
+    "externals": []
   },
   {
     "id": "paste-image-rename",
@@ -159,9 +144,9 @@
   },
   {
     "id": "sliding-panes",
-    "tier": "T0",
-    "onload": false,
-    "firstFailure": "Class constructor Plugin cannot be invoked without 'new'",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
     "externals": []
   },
   {
@@ -180,25 +165,23 @@
   },
   {
     "id": "tasks",
-    "tier": "T1",
-    "onload": false,
-    "firstFailure": "(0 , hT.getLanguage) is not a function",
-    "externals": [
-      "@codemirror/view"
-    ]
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
   },
   {
     "id": "templater",
-    "tier": "T0-fail",
-    "onload": false,
-    "firstFailure": "Class extends value undefined is not a constructor or null",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
     "externals": []
   },
   {
     "id": "various-complements",
-    "tier": "T1",
-    "onload": false,
-    "firstFailure": "Cannot set properties of undefined (setting 'func')",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
     "externals": []
   }
 ]

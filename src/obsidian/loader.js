@@ -1,38 +1,49 @@
 // Plugin loader — evaluates an UNMODIFIED Obsidian plugin's main.js.
 // Real plugins are bundled to CommonJS that does `require('obsidian')` and sets
-// `module.exports`. We provide that contract: a `require` that returns our shim,
-// then instantiate the exported Plugin subclass against an App over the VFS.
-
+// `module.exports`. We provide that contract: a `require` that returns our shim (plus
+// any real externals the host provides, e.g. @codemirror/*), then instantiate the
+// exported Plugin subclass against an App over the VFS and register it like Obsidian.
 import * as obsidian from './api.js';
 
-export function loadPluginSource({ app, manifest, source }) {
+// Permissive proxy for unknown requires (the documented capability-walled libs). It
+// no-ops gracefully so a plugin that touches an absent lib during onload doesn't crash.
+function universal(label) {
+  const f = function () { return universal(label); };
+  return new Proxy(f, { get: (_t, k) => (k === 'then' ? undefined : universal(label)), apply: () => universal(label), construct: () => universal(label) });
+}
+
+/**
+ * Evaluate a plugin bundle and construct its Plugin instance.
+ * @param {{app, manifest, source, externals?:object, permissive?:boolean}} o
+ *   externals: { '@codemirror/state': mod, … } real modules to resolve by name.
+ *   permissive (default true): unknown requires get a no-op proxy instead of throwing.
+ */
+export function loadPluginSource({ app, manifest, source, externals = {}, permissive = true }) {
   const module = { exports: {} };
   const exports = module.exports;
-
-  // The capability boundary, made explicit: only `obsidian` resolves. A plugin
-  // that `require('fs')` / `require('child_process')` fails loudly here rather
-  // than silently — that's the honest subset.
   const require = (name) => {
     if (name === 'obsidian') return obsidian;
-    throw new Error(
-      `[uicommons] plugin "${manifest.id}" requires "${name}", which the browser sandbox cannot provide`,
-    );
+    if (externals[name]) return externals[name];
+    if (permissive) return universal(name);
+    throw new Error(`[pumice] plugin "${manifest.id}" requires "${name}", which the browser sandbox cannot provide`);
   };
-
+  const win = typeof window !== 'undefined' ? window : undefined;
+  const doc = typeof document !== 'undefined' ? document : undefined;
   // eslint-disable-next-line no-new-func
-  const fn = new Function('module', 'exports', 'require', 'process', source);
-  fn(module, exports, require, { platform: 'web', env: {} });
+  const fn = new Function('module', 'exports', 'require', 'process', 'app', 'window', 'document', source);
+  fn(module, exports, require, { platform: 'web', env: {} }, app, win, doc);
 
   const PluginClass = module.exports.default || module.exports;
   if (typeof PluginClass !== 'function') {
-    throw new Error(`[uicommons] plugin "${manifest.id}" did not export a Plugin class`);
+    throw new Error(`[pumice] plugin "${manifest.id}" did not export a Plugin class`);
   }
-  const instance = new PluginClass(app, manifest);
-  return instance;
+  return new PluginClass(app, manifest);
 }
 
-export async function activatePlugin({ app, manifest, source }) {
-  const instance = loadPluginSource({ app, manifest, source });
+export async function activatePlugin({ app, manifest, source, externals = {}, permissive = true }) {
+  const instance = loadPluginSource({ app, manifest, source, externals, permissive });
+  // Obsidian registers the instance in app.plugins before calling onload (plugins read it).
+  if (app.plugins && app.plugins.plugins) { app.plugins.plugins[manifest.id] = instance; app.plugins.enabledPlugins && app.plugins.enabledPlugins.add(manifest.id); }
   await instance.onload();
   return {
     manifest,

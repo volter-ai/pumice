@@ -2,8 +2,13 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>uicommons — vault display layer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Pumice — vault display layer</title>
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <meta name="theme-color" content="#cba6f7" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="./icons/128x128@2x.png" />
+    <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').then(()=>{window.__swReady=true}).catch(()=>{}));}</script>
     <style>
       :root { --bg:#16181d; --panel:#1d2026; --ink:#e6e6e6; --muted:#888; --accent:#7aa2f7; }
       * { box-sizing: border-box; }

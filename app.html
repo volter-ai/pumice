@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Pumice — workbench</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <meta name="theme-color" content="#cba6f7" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Pumice" />
+  <link rel="apple-touch-icon" href="./icons/128x128@2x.png" />
+  <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').then(r=>{window.__swReady=true}).catch(()=>{}));}</script>
+  <style>
+    :root { --background-primary: #1e1e2e; --text-normal: #cdd6f4; --text-accent: #cba6f7; --interactive-accent: #cba6f7; --font-text-size: 16px; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: -apple-system, system-ui, sans-serif; background: var(--background-primary); color: var(--text-normal); font-size: var(--font-text-size); }
+    #app { display: grid; grid-template-columns: 200px 1fr; height: 100vh; }
+    #sidebar { background: #181825; border-right: 1px solid #313244; overflow-y: auto; }
+    #sidebar h1 { font-size: 14px; padding: 12px; margin: 0; color: var(--text-accent); }
+    .feature-tab { display: block; width: 100%; text-align: left; padding: 8px 12px; background: none; border: none; color: var(--text-normal); cursor: pointer; font-size: 13px; }
+    .feature-tab:hover, .feature-tab.active { background: #313244; }
+    #main { padding: 16px; overflow: auto; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .callout { border-left: 3px solid var(--interactive-accent); padding: 8px 12px; margin: 8px 0; background: #313244; border-radius: 4px; }
+    .callout-title-inner { font-weight: bold; }
+    a.internal-link, a.tag { color: var(--text-accent); cursor: pointer; }
+    mark { background: #f9e2af; color: #1e1e2e; }
+    .cm-editor { border: 1px solid #313244; min-height: 120px; }
+    table { border-collapse: collapse; } td, th { border: 1px solid #313244; padding: 4px 8px; }
+    .canvas-node { position: absolute; border: 1px solid var(--interactive-accent); padding: 6px; background: #313244; font-size: 12px; }
+    #canvas-host { position: relative; height: 320px; border: 1px solid #313244; }
+    .hover-popover { position: absolute; background: #181825; border: 1px solid var(--interactive-accent); padding: 8px; max-width: 300px; z-index: 10; }
+    .graph-2d circle { fill: var(--text-accent); } .graph-2d line { stroke: #585b70; }
+    input, button.action { background: #313244; color: var(--text-normal); border: 1px solid #45475a; padding: 4px 8px; border-radius: 4px; }
+    .result-item { padding: 4px; cursor: pointer; } .result-item:hover { background: #313244; }
+    .metadata-property { display: flex; gap: 8px; padding: 2px 0; } .metadata-property-key { color: var(--text-accent); min-width: 100px; }
+    #graph3d-host, #graph-host > svg, .graph-2d { max-width: 100%; }
+    img, svg, table, pre { max-width: 100%; }
+    pre { overflow-x: auto; }
+    /* Mobile: collapse the fixed sidebar into a horizontal scrolling tab bar, single column. */
+    @media (max-width: 768px) {
+      #app { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+      #sidebar { border-right: none; border-bottom: 1px solid #313244; }
+      #sidebar h1 { display: inline-block; }
+      #tabs { display: flex; overflow-x: auto; white-space: nowrap; }
+      .feature-tab { display: inline-block; width: auto; }
+      #main { padding: 12px; }
+    }
+</style>
+</head>
+<body>
+  <div id="app">
+    <nav id="sidebar"><h1>Pumice</h1><div id="tabs"></div></nav>
+    <main id="main"></main>
+  </div>
+  <script type="module" src="/src/app/workbench.js"></script>
+</body>
+</html>

@@ -1,8 +1,9 @@
 import { httpAdapter } from './vfs/httpAdapter.js';
 import { pickFolderAdapter } from './vfs/fsaAdapter.js';
-import { buildGraph, backlinks as backlinksOf } from './vfs/links.js';
-import { renderNote } from './render.js';
-import { mountGraph } from './graph.js';
+import { backlinks as backlinksOf } from './vfs/links.js';
+import { renderMarkdown } from './render/obsidian-markdown.js';
+// Graph visualization is provided by the REAL 3D-graph Obsidian plugin in the workbench
+// (src/app/workbench.js) — no Pumice-built graph here.
 
 const els = {
   list: document.getElementById('list'),
@@ -18,7 +19,6 @@ const els = {
 let adapter = null;
 let snapshot = {}; // path -> content
 let nameToPath = new Map();
-let graphHandle = null;
 
 function indexNames() {
   nameToPath = new Map();
@@ -34,10 +34,6 @@ async function load(adp) {
   snapshot = await adapter.snapshot();
   indexNames();
   renderList();
-  const g = buildGraph(snapshot);
-  if (!graphHandle) graphHandle = mountGraph(els.graph, g, openByPath);
-  else graphHandle.update(g);
-  sizeGraph();
   const first = Object.keys(snapshot)[0];
   if (first) openByPath(first);
 }
@@ -56,8 +52,9 @@ function openByPath(path) {
   const content = snapshot[path];
   if (content == null) return;
   els.title.textContent = path.replace(/\.md$/i, '');
-  els.note.innerHTML = renderNote(content, (name) => '#' + encodeURIComponent(name));
-  els.note.querySelectorAll('a.wikilink').forEach((a) => {
+  els.note.replaceChildren();
+  renderMarkdown(content, els.note, { resolve: (name) => '#' + encodeURIComponent(name) });
+  els.note.querySelectorAll('a.internal-link').forEach((a) => {
     a.addEventListener('click', (e) => {
       e.preventDefault();
       const name = decodeURIComponent(a.dataset.target).toLowerCase();
@@ -73,11 +70,6 @@ function openByPath(path) {
     li.addEventListener('click', () => openByPath(li.dataset.p)),
   );
 }
-
-function sizeGraph() {
-  if (graphHandle) graphHandle.resize(els.graph.clientWidth, els.graph.clientHeight);
-}
-window.addEventListener('resize', sizeGraph);
 
 // Two ways in, same interface behind them:
 els.pick.onclick = async () => {

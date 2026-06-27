@@ -1,25 +1,67 @@
 {
   "name": "pumice-md",
-  "private": true,
+  "private": false,
   "version": "0.1.0",
   "type": "module",
   "description": "Pumice — a virtual Obsidian: server-optional, storage-agnostic Obsidian-compatible display layer on an in-browser virtual FS, with a first-class agent API.",
   "license": "MIT",
   "homepage": "https://github.com/volter-ai/pumice",
-  "repository": { "type": "git", "url": "git+https://github.com/volter-ai/pumice.git" },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/volter-ai/pumice.git"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node scripts/ci.mjs",
+    "e2e": "playwright test",
+    "test:all": "node scripts/ci.mjs && playwright test",
+    "start": "node bin/pumice-server.mjs",
+    "serve": "node bin/pumice-server.mjs"
   },
   "dependencies": {
+    "@codemirror/autocomplete": "^6.20.3",
+    "@codemirror/commands": "^6.10.4",
+    "@codemirror/language": "^6.12.4",
+    "@codemirror/search": "^6.7.1",
+    "@codemirror/state": "^6.7.0",
+    "@codemirror/view": "^6.43.3",
+    "@lezer/common": "^1.5.2",
+    "@lezer/highlight": "^1.2.3",
     "3d-force-graph": "^1.73.4",
+    "js-yaml": "^5.2.0",
     "marked": "^12.0.2",
-    "moment": "^2.30.1"
+    "moment": "^2.30.1",
+    "regenerator-runtime": "^0.14.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "@tauri-apps/api": "^2.11.1",
+    "@tauri-apps/cli": "^2.11.3",
     "fake-indexeddb": "^6.2.5",
     "jsdom": "^27.0.1",
     "vite": "^5.4.0"
-  }
+  },
+  "types": "./src/index.d.ts",
+  "exports": {
+    ".": "./src/index.js",
+    "./render": "./src/render/obsidian-markdown.js",
+    "./sdk": "./src/sdk/index.js",
+    "./vfs": "./src/index.js",
+    "./mcp": "./src/mcp/server.js",
+    "./canvas": "./src/canvas/canvas.js",
+    "./bases": "./src/bases/bases.js",
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "server",
+    "bin",
+    "README.md",
+    "LICENSE",
+    "LEGAL.md",
+    "SDK.md"
+  ],
+  "sideEffects": false
 }

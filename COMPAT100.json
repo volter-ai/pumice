@@ -1,0 +1,618 @@
+[
+  {
+    "id": "admonition",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "advanced-tables",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "buttons",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "calendar",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "cm-editor-syntax-highlight",
+    "tier": "T0-fail",
+    "onload": false,
+    "firstFailure": "Cannot set properties of undefined (setting 'cypher')",
+    "externals": []
+  },
+  {
+    "id": "code-block-copy",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "commander",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "copy-block-link",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "dataview",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "dataview-serializer",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "emoji-shortcodes",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "excalidraw",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "@lezer/lr"
+    ]
+  },
+  {
+    "id": "file-explorer-note-count",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "folder-note-core",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "highlightr",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "homepage",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "hotkeysplus",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "hover-editor",
+    "tier": "T1",
+    "onload": false,
+    "firstFailure": "Cannot read properties of undefined (reading 'instance')",
+    "externals": []
+  },
+  {
+    "id": "iconize",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "kanban",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "linter",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "metaedit",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "fs",
+      "path"
+    ]
+  },
+  {
+    "id": "mind-map",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "minimal-settings",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "natural-dates",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-auto-link-title",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "electron"
+    ]
+  },
+  {
+    "id": "obsidian-banners",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-charts",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-checklist",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "punycode"
+    ]
+  },
+  {
+    "id": "obsidian-collapse-all",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-consistent-attachments",
+    "tier": "T1",
+    "onload": false,
+    "firstFailure": "AggregateError",
+    "externals": [
+      "tty",
+      "util",
+      "os",
+      "node:path",
+      "node:process",
+      "node:url"
+    ]
+  },
+  {
+    "id": "obsidian-day-planner",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-dictionary",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-emoji-toolbar",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-footnotes",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-full-calendar",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-git",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "path",
+      "fs/promises",
+      "child_process",
+      "os",
+      "fs",
+      "node:path",
+      "node:events",
+      "node:util"
+    ]
+  },
+  {
+    "id": "obsidian-hider",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-icons-plugin",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-importer",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "fs",
+      "crypto"
+    ]
+  },
+  {
+    "id": "obsidian-jump-to-link",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-kindle-plugin",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "events",
+      "fs",
+      "buffer",
+      "path",
+      "electron"
+    ]
+  },
+  {
+    "id": "obsidian-latex-suite",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "@codemirror/lint"
+    ]
+  },
+  {
+    "id": "obsidian-leaflet",
+    "tier": "T1",
+    "onload": false,
+    "firstFailure": "e.disable is not a function",
+    "externals": []
+  },
+  {
+    "id": "obsidian-link-converter",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-list-callouts",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-map-view",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "path",
+      "child_process"
+    ]
+  },
+  {
+    "id": "obsidian-memos",
+    "tier": "T1",
+    "onload": false,
+    "firstFailure": "r.set is not a function",
+    "externals": []
+  },
+  {
+    "id": "obsidian-note-refactor",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-open-vault-in-vscode",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "child_process"
+    ]
+  },
+  {
+    "id": "obsidian-pandoc",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "fs",
+      "path",
+      "child_process",
+      "constants",
+      "os",
+      "assert",
+      "events",
+      "util"
+    ]
+  },
+  {
+    "id": "obsidian-paste-png-to-jpeg",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "path"
+    ]
+  },
+  {
+    "id": "obsidian-plugin-update-tracker",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-projects",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-quick-explorer",
+    "tier": "T0",
+    "onload": false,
+    "firstFailure": "Maximum call stack size exceeded",
+    "externals": []
+  },
+  {
+    "id": "obsidian-read-it-later",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-relative-line-numbers",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-reminder",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-rollover-daily-todos",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-spaced-repetition",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-toc",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-vault-statistics",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-wikipedia",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "obsidian-zoom",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "omnisearch",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": [
+      "http",
+      "url"
+    ]
+  },
+  {
+    "id": "outliner",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "paste-image-rename",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "periodic-notes",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "quickadd",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "recent-files",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "sliding-panes",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "style-settings",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "supercharged-links",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "tag-wrangler",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "tasks",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "templater",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  },
+  {
+    "id": "text-generator",
+    "tier": "T0-fail",
+    "onload": false,
+    "firstFailure": "Prism.languages.markup.tag.addAttribute is not a function",
+    "externals": [
+      "node:fs/promises",
+      "node:path",
+      "electron",
+      "http",
+      "https",
+      "stream",
+      "events",
+      "timers",
+      "url",
+      "os",
+      "vm",
+      "console",
+      "util",
+      "tty"
+    ]
+  },
+  {
+    "id": "various-complements",
+    "tier": "T2",
+    "onload": true,
+    "firstFailure": null,
+    "externals": []
+  }
+]

@@ -6,7 +6,7 @@
 
 ## Why
 
-- **Backend-free** — the vault lives in a virtual filesystem in the browser (IndexedDB and friends). Host it as static files, or run it server-optional.
+- **Backend-optional** — the vault lives behind a pluggable virtual filesystem. Browser backends: **in-memory** (ephemeral/demo), **File System Access** (Chromium — opens a real local folder), **OPFS** (persistent, all browsers, no server), and **HTTP** (the bundled server). Host it as static files, or run it server-optional.
 - **Obsidian-compatible** — opens existing vaults as-is; targets the documented plugin and theme contracts rather than a fork.
 - **Storage-agnostic** — pluggable VFS backends; your notes aren't locked to one provider.
 - **Agent-native** — the same REST API the SPA uses is exposed for AI agents, so anything the UI can do, an agent can do headless (see [`AGENTS.md`](./AGENTS.md)).

@@ -17,11 +17,14 @@ export async function pickFolderAdapter() {
       else if (name.toLowerCase().endsWith('.md')) yield { path, handle };
     }
   }
-  async function handleFor(path) {
+  // `create` true (for writes) auto-creates missing parent directories, matching the
+  // node-fs adapter's `mkdir({recursive:true})`. Without it, writing `Inbox/2026/n.md`
+  // into a vault lacking those folders threw — the bug that made write() unusable.
+  async function handleFor(path, create = false) {
     const parts = path.split('/');
     let dir = root;
-    for (let i = 0; i < parts.length - 1; i++) dir = await dir.getDirectoryHandle(parts[i]);
-    return dir.getFileHandle(parts[parts.length - 1]);
+    for (let i = 0; i < parts.length - 1; i++) dir = await dir.getDirectoryHandle(parts[i], { create });
+    return dir.getFileHandle(parts[parts.length - 1], { create });
   }
 
   return {
@@ -36,7 +39,7 @@ export async function pickFolderAdapter() {
       return (await (await handleFor(path)).getFile()).text();
     },
     async write(path, content) {
-      const fh = await handleFor(path);
+      const fh = await handleFor(path, true); // create missing parent dirs + file
       const w = await fh.createWritable();
       await w.write(content);
       await w.close();

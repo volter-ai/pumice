@@ -11,6 +11,26 @@ import { listFiles, readFile, writeFile, snapshot } from '../server/vaultFs.js';
 import * as obsidian from '../src/obsidian/api.js';
 import { setNoticeSink } from '../src/obsidian/api.js';
 import { createApp } from '../src/obsidian/runtime.js';
+import * as cmState from '@codemirror/state';
+import * as cmView from '@codemirror/view';
+import * as cmLanguage from '@codemirror/language';
+import * as lezerCommon from '@lezer/common';
+import * as lezerHighlight from '@lezer/highlight';
+import * as cmCommands from '@codemirror/commands';
+import * as cmAutocomplete from '@codemirror/autocomplete';
+import * as cmSearch from '@codemirror/search';
+
+// Real externals Obsidian provides to plugins (so `extends WidgetType` etc. work).
+const REAL_EXTERNALS = {
+  '@codemirror/state': cmState,
+  '@codemirror/view': cmView,
+  '@codemirror/language': cmLanguage,
+  '@codemirror/commands': cmCommands,
+  '@codemirror/autocomplete': cmAutocomplete,
+  '@codemirror/search': cmSearch,
+  '@lezer/common': lezerCommon,
+  '@lezer/highlight': lezerHighlight,
+};
 
 // id -> GitHub "latest release" main.js. A representative slice of the most-installed
 // plugins (NOT the full pinned top-100 lockfile — that's a separate Phase-0 artifact).
@@ -73,24 +93,32 @@ class WorkerStub { constructor() {} postMessage() {} terminate() {} addEventList
 const adapter = { name: 'node-fs', capabilities: { write: true, watch: false, sync: true }, list: listFiles, read: readFile, write: writeFile, snapshot };
 function universal(label, sink) {
   const f = function () { return universal(label, sink); };
-  return new Proxy(f, { get: (_t, k) => (k === 'then' ? undefined : universal(label + '.' + String(k), sink)), apply: () => universal(label, sink), construct: () => universal(label, sink) });
+  return new Proxy(f, { get: (_t, k) => (k === 'then' ? undefined : (k === Symbol.toPrimitive || k === 'toString' || k === Symbol.toStringTag ? () => label : universal(label + '.' + String(k), sink))), apply: () => universal(label, sink), construct: () => universal(label, sink) });
 }
 
 async function triage(id, source) {
   const externals = new Set();
-  const requireShim = (n) => { if (n === 'obsidian') return obsidian; externals.add(n); return universal(n, externals); };
+  const requireShim = (n) => {
+    if (n === 'obsidian') return obsidian;
+    if (REAL_EXTERNALS[n]) return REAL_EXTERNALS[n];
+    externals.add(n);
+    return universal(n, externals);
+  };
   const app = await createApp(adapter, async (md) => marked.parse(md));
+    globalThis.app = app; if (typeof window !== 'undefined') window.app = app;
   const manifest = { id, name: id, version: '0.0.0', minAppVersion: '1.0.0' };
   const out = { id, tier: 'T0-fail', onload: false, firstFailure: null, externals: [] };
   try {
     const module = { exports: {} };
-    const fn = new Function('module', 'exports', 'require', 'process', 'window', 'document', 'navigator', 'self', 'activeWindow', 'activeDocument', 'Worker', 'app', 'global', 'createEl', 'createDiv', 'createSpan', 'createFragment', source);
-    fn(module, module.exports, requireShim, { platform: 'web', env: {} }, window, window.document, window.navigator, window, window, window.document, WorkerStub, app, window, window.createEl, window.createDiv, window.createSpan, window.createFragment);
+    const fn = new Function('module', 'exports', 'require', 'process', 'window', 'document', 'navigator', 'self', 'activeWindow', 'activeDocument', 'Worker', 'global', 'createEl', 'createDiv', 'createSpan', 'createFragment', source);
+    fn(module, module.exports, requireShim, { platform: 'web', env: {} }, window, window.document, window.navigator, window, window, window.document, WorkerStub, window, window.createEl, window.createDiv, window.createSpan, window.createFragment);
     const P = module.exports.default || module.exports;
     if (typeof P !== 'function') throw new Error('no Plugin class exported');
     out.tier = 'T0';
     const inst = new P(app, manifest);
     out.tier = 'T1';
+    app.plugins.plugins[manifest.id] = inst; // Obsidian registers the instance before onload
+    app.plugins.enabledPlugins.add(manifest.id);
     await inst.onload();
     out.tier = 'T2';
     out.onload = true;
@@ -125,7 +153,7 @@ console.log('\nwrote COMPAT.json');
 
 // Regression gate: T2 count must not drop below the established floor. Raise FLOOR as
 // the number climbs so the gate ratchets forward and CI catches regressions.
-const FLOOR = 12;
+const FLOOR = 25;
 if (t2.length < FLOOR) {
   console.log(`\nREGRESSION: T2 ${t2.length} < floor ${FLOOR}`);
   process.exit(1);

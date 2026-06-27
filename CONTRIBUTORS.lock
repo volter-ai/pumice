@@ -1,0 +1,11 @@
+# CONTRIBUTORS.lock — clean-room provenance attestation
+#
+# Every contributor attests they have NOT viewed, copied, decompiled, or reverse-
+# engineered Obsidian's proprietary source (app.asar/app.js/minified bundles), and that
+# their contributions derive only from the MIT-licensed obsidian.d.ts type surface and
+# observed plugin behavior. See LEGAL.md. DoD gate #8 asserts this file is present and
+# non-empty; CI fails if a new contributor lands code without an entry here.
+#
+# format: <name-or-handle> <SPDX-license-of-contribution> <clean-room: yes>
+
+Volter-AI MIT clean-room:yes

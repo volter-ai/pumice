@@ -55,6 +55,21 @@ export function buildGraph(files) {
   return { nodes, links };
 }
 
+/** Tag index across the vault: { tag -> [paths] }, sorted. Inline #tags + frontmatter. */
+export function tagIndex(files) {
+  const idx = {};
+  for (const [path, content] of Object.entries(files)) {
+    const tags = new Set();
+    for (const m of content.match(/(^|\s)#([A-Za-z][\w/-]*)/g) || []) tags.add(m.trim().replace(/^#/, ''));
+    const { frontmatter } = splitFrontmatter(content);
+    // tolerate YAML flow-lists "[active, work]" from the naive frontmatter parser
+    for (const t of String(frontmatter.tags || '').split(/[,\s]+/).map((x) => x.replace(/[^\w/-]/g, '')).filter(Boolean)) tags.add(t.replace(/^#/, ''));
+    for (const t of tags) (idx[t] || (idx[t] = [])).push(path);
+  }
+  for (const k of Object.keys(idx)) idx[k].sort();
+  return idx;
+}
+
 /** All notes that link TO `path`. */
 export function backlinks(files, path) {
   const target = noteName(path).toLowerCase();
@@ -87,6 +102,7 @@ export function search(files, query) {
     const fmTags = String(frontmatter.tags || '')
       .toLowerCase()
       .split(/[,\s]+/)
+      .map((x) => x.replace(/[^\w/-]/g, ''))
       .filter(Boolean);
     const hasTag = (tag) => lc.includes('#' + tag) || fmTags.includes(tag);
     if (!fields.path.every((p) => lp.includes(p))) continue;

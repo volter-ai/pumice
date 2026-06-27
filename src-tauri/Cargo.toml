@@ -1,0 +1,6 @@
+# Pumice desktop workspace.
+#   core — pure-Rust native capability layer (fs / CORS-free HTTP / child_process) + tests
+#   app  — the Tauri desktop binary that wraps `core` and serves the web UI
+[workspace]
+members = ["core", "app"]
+resolver = "2"

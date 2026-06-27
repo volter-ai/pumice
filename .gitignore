@@ -17,3 +17,11 @@ yarn-error.log*
 
 # Agent harness (local only)
 .claude/
+
+# Rust / Tauri build artifacts
+src-tauri/target/
+
+# Test + runtime output
+test-results/
+playwright-report/
+vault/undefined/
